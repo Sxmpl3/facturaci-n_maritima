@@ -1,0 +1,253 @@
+@import 'tailwindcss';
+
+@import 'tw-animate-css';
+
+@source '../views';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * ------------------------------------------------------------------
+ * Wixia · Design tokens — replica la identidad de la presentación
+ * corporativa: azul cobalto vibrante, blanco puro, tipografía Ubuntu.
+ * ------------------------------------------------------------------
+ */
+
+@theme {
+    --font-sans: 'Ubuntu', 'Nunito Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Ubuntu', ui-sans-serif, system-ui, sans-serif;
+
+    /* Wixia core palette */
+    --color-wx-blue: #1E4FE0;
+    --color-wx-blue-2: #1642c9;
+    --color-wx-blue-3: #0d2f9c;
+    --color-wx-blue-4: #08205e;
+    --color-wx-navy: #0B1B3B;
+    --color-wx-ink: #0F1B2D;
+    --color-wx-ink-2: #2A3B52;
+    --color-wx-muted: #6B7280;
+    --color-wx-paper: #FFFFFF;
+    --color-wx-paper-2: #F5F7FB;
+    --color-wx-paper-3: #EEF2F9;
+    --color-wx-rule: #E3E8F1;
+    --color-wx-block-gray: #D5D7DB;
+    --color-wx-block-dark: #1F2530;
+
+    /* Signals */
+    --color-wx-ok: #2E7D57;
+    --color-wx-warn: #C97D2F;
+    --color-wx-error: #C0392B;
+    --color-wx-purple: #7C3AED;
+    --color-wx-teal: #14B8A6;
+
+    --color-wx-inkline: rgba(15, 27, 45, 0.10);
+
+    --radius-lg: 12px;
+    --radius-md: 8px;
+    --radius-sm: 4px;
+
+    /* shadcn compat */
+    --color-background: var(--color-wx-paper);
+    --color-foreground: var(--color-wx-navy);
+    --color-primary: var(--color-wx-blue);
+    --color-primary-foreground: #ffffff;
+    --color-secondary: var(--color-wx-paper-2);
+    --color-secondary-foreground: var(--color-wx-navy);
+    --color-muted: var(--color-wx-paper-2);
+    --color-muted-foreground: var(--color-wx-muted);
+    --color-accent: var(--color-wx-blue);
+    --color-accent-foreground: #ffffff;
+    --color-destructive: var(--color-wx-error);
+    --color-destructive-foreground: #ffffff;
+    --color-border: var(--color-wx-rule);
+    --color-input: var(--color-wx-rule);
+    --color-ring: var(--color-wx-blue);
+    --color-card: #ffffff;
+    --color-card-foreground: var(--color-wx-navy);
+    --color-popover: #ffffff;
+    --color-popover-foreground: var(--color-wx-navy);
+    --color-sidebar: var(--color-wx-navy);
+    --color-sidebar-foreground: #ffffff;
+    --color-sidebar-primary: var(--color-wx-blue);
+    --color-sidebar-primary-foreground: #ffffff;
+    --color-sidebar-accent: rgba(255,255,255,0.08);
+    --color-sidebar-accent-foreground: #ffffff;
+    --color-sidebar-border: rgba(255,255,255,0.10);
+    --color-sidebar-ring: var(--color-wx-blue);
+}
+
+:root {
+    --radius: 8px;
+}
+
+.dark { color-scheme: light; }
+
+@layer base {
+    html, body {
+        background-color: var(--color-wx-paper);
+        color: var(--color-wx-navy);
+        font-family: var(--font-sans);
+        -webkit-font-smoothing: antialiased;
+    }
+
+    :where(button, a, input, textarea, select, [role="button"]):focus-visible {
+        outline: 2px solid var(--color-wx-blue);
+        outline-offset: 2px;
+    }
+
+    ::selection {
+        background: var(--color-wx-blue);
+        color: #fff;
+    }
+}
+
+@layer components {
+    /* Marca decorativa que aparece a la izquierda de los títulos en el PDF:
+       tres cuadrados escalonados en gris, negro y azul */
+    .wx-mark {
+        display: inline-grid;
+        grid-template-columns: repeat(2, 12px);
+        grid-template-rows: repeat(2, 12px);
+        gap: 2px;
+        vertical-align: middle;
+    }
+    .wx-mark::before,
+    .wx-mark::after,
+    .wx-mark > span,
+    .wx-mark > i {
+        content: '';
+        display: block;
+        width: 12px; height: 12px;
+    }
+    .wx-mark > span:nth-child(1) { background: var(--color-wx-block-gray); }
+    .wx-mark > span:nth-child(2) { background: var(--color-wx-blue); }
+    .wx-mark > span:nth-child(3) { background: transparent; }
+    .wx-mark > span:nth-child(4) { background: var(--color-wx-block-dark); }
+
+    .wx-mark-lg > span { width: 20px; height: 20px; }
+    .wx-mark-lg { grid-template-columns: repeat(2, 20px); grid-template-rows: repeat(2, 20px); }
+
+    /* Buttons */
+    .wx-btn {
+        display: inline-flex; align-items: center; justify-content: center;
+        gap: 0.5rem;
+        padding: 0.65rem 1.25rem;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        line-height: 1;
+        border: 1px solid transparent;
+        background: var(--color-wx-blue);
+        color: #ffffff;
+        transition: background-color .15s ease, transform .12s ease, border-color .15s ease;
+    }
+    .wx-btn:hover  { background: var(--color-wx-blue-2); }
+    .wx-btn:active { transform: translateY(1px); }
+
+    .wx-btn-ghost {
+        background: transparent;
+        color: var(--color-wx-navy);
+        border-color: var(--color-wx-rule);
+    }
+    .wx-btn-ghost:hover { background: var(--color-wx-paper-2); border-color: var(--color-wx-navy); }
+
+    .wx-btn-outline {
+        background: transparent;
+        color: var(--color-wx-blue);
+        border-color: var(--color-wx-blue);
+    }
+    .wx-btn-outline:hover { background: var(--color-wx-blue); color: #fff; }
+
+    .wx-btn-dark {
+        background: var(--color-wx-navy);
+        color: #ffffff;
+        border-color: var(--color-wx-navy);
+    }
+    .wx-btn-dark:hover { background: #000; }
+
+    /* Inputs */
+    .wx-input {
+        width: 100%;
+        border: 1px solid var(--color-wx-rule);
+        background: #fff;
+        padding: 0.6rem 0.8rem;
+        font-size: 0.9rem;
+        color: var(--color-wx-navy);
+        border-radius: 6px;
+        transition: border-color .12s ease, box-shadow .12s ease;
+    }
+    .wx-input:focus {
+        outline: none;
+        border-color: var(--color-wx-blue);
+        box-shadow: 0 0 0 3px rgba(30, 79, 224, 0.15);
+    }
+    .wx-input:disabled {
+        background: var(--color-wx-paper-2);
+        color: var(--color-wx-muted);
+    }
+
+    .wx-label {
+        display: block;
+        font-size: 0.75rem;
+        color: var(--color-wx-muted);
+        margin-bottom: 0.35rem;
+        font-weight: 500;
+    }
+
+    /* Chips */
+    .wx-chip {
+        display: inline-flex; align-items: center; gap: 0.4rem;
+        padding: 0.22rem 0.6rem;
+        border: 1px solid var(--color-wx-rule);
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 500;
+        color: var(--color-wx-navy);
+        background: #fff;
+    }
+    .wx-chip .dot {
+        width: 6px; height: 6px; border-radius: 999px;
+        background: currentColor;
+    }
+    .wx-chip[data-tone="ok"]     { color: var(--color-wx-ok);    border-color: color-mix(in oklab, var(--color-wx-ok) 40%, white);    background: color-mix(in oklab, var(--color-wx-ok) 10%, white); }
+    .wx-chip[data-tone="warn"]   { color: var(--color-wx-warn);  border-color: color-mix(in oklab, var(--color-wx-warn) 40%, white);  background: color-mix(in oklab, var(--color-wx-warn) 12%, white); }
+    .wx-chip[data-tone="signal"] { color: var(--color-wx-blue);  border-color: color-mix(in oklab, var(--color-wx-blue) 40%, white);  background: color-mix(in oklab, var(--color-wx-blue) 10%, white); }
+    .wx-chip[data-tone="error"]  { color: var(--color-wx-error); border-color: color-mix(in oklab, var(--color-wx-error) 40%, white); background: color-mix(in oklab, var(--color-wx-error) 10%, white); }
+    .wx-chip[data-tone="muted"]  { color: var(--color-wx-muted); border-color: var(--color-wx-rule); background: #fff; }
+
+    /* Card blanca base */
+    .wx-card {
+        background: #ffffff;
+        border: 1px solid var(--color-wx-rule);
+        border-radius: 10px;
+    }
+
+    /* Phase badge — cuadrado azul con número blanco */
+    .wx-phase {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 44px; height: 44px;
+        background: var(--color-wx-blue);
+        color: #fff;
+        font-weight: 700;
+        font-size: 15px;
+        border-radius: 4px;
+        letter-spacing: 0.02em;
+    }
+
+    /* Eyebrow, sobrio */
+    .wx-eyebrow {
+        font-size: 0.72rem;
+        letter-spacing: 0.14em;
+        color: var(--color-wx-muted);
+        text-transform: uppercase;
+        font-weight: 500;
+    }
+
+    /* Hero azul cobalto — bloque de bienvenida al PDF de Wixia */
+    .wx-hero-blue {
+        background: var(--color-wx-blue);
+        color: #ffffff;
+    }
+    .wx-hero-blue h1, .wx-hero-blue h2, .wx-hero-blue p { color: #ffffff; }
+}
