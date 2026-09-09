@@ -15,7 +15,7 @@ class OpenAIService
     public function __construct()
     {
         $this->apiKey = (string) config('services.openai.key');
-        $this->model  = (string) config('services.openai.model', 'gpt-5-mini');
+        $this->model  = (string) config('services.openai.model', 'gpt-5.6-luna');
 
         if ($this->apiKey === '') {
             throw new RuntimeException('OPENAI_API_KEY no configurada.');
