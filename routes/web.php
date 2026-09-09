@@ -18,6 +18,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('{expediente}', [ExpedienteController::class, 'show'])->name('show');
 
         Route::post('{expediente}/documentos', [DocumentoController::class, 'store'])->name('documentos.store');
+        Route::get('{expediente}/documentos/{documento}/ver', [DocumentoController::class, 'ver'])->name('documentos.ver');
         Route::delete('{expediente}/documentos/{documento}', [DocumentoController::class, 'destroy'])->name('documentos.destroy');
         Route::post('{expediente}/analizar', [DocumentoController::class, 'analizar'])->name('analizar');
 

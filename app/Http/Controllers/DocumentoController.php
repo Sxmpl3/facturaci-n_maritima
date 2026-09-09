@@ -111,4 +111,26 @@ class DocumentoController extends Controller
 
         return back();
     }
+
+    /**
+     * Sirve el archivo de un documento a través de PHP para que:
+     * - Solo lo vean usuarios autenticados con acceso al expediente.
+     * - No dependa del symlink /storage ni de permisos filesystem
+     *   (que en producción con PHP-FPM daban 403 al servir vía Nginx).
+     */
+    public function ver(Request $request, Expediente $expediente, Documento $documento)
+    {
+        abort_if($documento->expediente_id !== $expediente->id, 404);
+        abort_unless(Storage::disk('public')->exists($documento->ruta), 404);
+
+        return Storage::disk('public')->response(
+            $documento->ruta,
+            $documento->nombre_original,
+            [
+                'Content-Type'        => $documento->mime ?: 'application/octet-stream',
+                'Content-Disposition' => 'inline; filename="'.addslashes($documento->nombre_original).'"',
+                'X-Content-Type-Options' => 'nosniff',
+            ],
+        );
+    }
 }

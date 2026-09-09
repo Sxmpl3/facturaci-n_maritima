@@ -99,11 +99,12 @@ class ExpedienteController extends Controller
                 'validado_en'     => optional($expediente->validado_en)->format('d/m/Y H:i'),
                 'creado'          => optional($expediente->created_at)->format('d/m/Y H:i'),
             ],
-            'documentos' => $expediente->documentos->map(function ($d) {
+            'documentos' => $expediente->documentos->map(function ($d) use ($expediente) {
                 return [
                     'id'              => $d->id,
                     'nombre_original' => $d->nombre_original,
-                    'url'             => $d->url,
+                    // Servimos por PHP con auth: evita 403 de Nginx y protege documentos sensibles.
+                    'url'             => route('transito.documentos.ver', ['expediente' => $expediente->id, 'documento' => $d->id]),
                     'mime'            => $d->mime,
                     'tamano'          => $d->tamano,
                     'tipo_detectado'  => $d->tipo_detectado,
