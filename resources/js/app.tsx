@@ -13,7 +13,8 @@ void createInertiaApp({
         // Las páginas de Wixia (welcome + módulo tránsito) traen su propio shell.
         if (name === 'welcome' || name.startsWith('transito/')) return null;
         if (name.startsWith('auth/')) return AuthLayout;
-        if (name.startsWith('settings/')) return [AppLayout, SettingsLayout];
+        // Settings envuelve su propio TransitoShell — sin AppLayout externo.
+        if (name.startsWith('settings/')) return SettingsLayout;
         return AppLayout;
     },
     strictMode: true,

@@ -34,7 +34,7 @@ export default function Profile({
                 <Heading
                     variant="small"
                     title="Perfil"
-                    description="Actualiza tu nombre y correo electrónico"
+                    description="Actualiza tu nombre y correo electrónico."
                 />
 
                 <Form
