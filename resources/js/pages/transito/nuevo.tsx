@@ -15,21 +15,21 @@ export default function NuevoExpediente({ siguiente_referencia }: Props) {
             <Head title="Nuevo expediente · Wixia" />
 
             <div className="max-w-3xl">
-                <div className="flex items-start gap-4 mb-8">
-                    <span className="wx-phase">01</span>
-                    <div>
+                <div className="flex items-start gap-3 sm:gap-4 mb-6 sm:mb-8">
+                    <span className="wx-phase shrink-0">01</span>
+                    <div className="min-w-0">
                         <div className="wx-eyebrow mb-1">Fase 01 — Alta de expediente</div>
-                        <h1 className="font-display text-[30px] lg:text-[36px] font-bold leading-tight">
+                        <h1 className="font-display text-[24px] sm:text-[30px] lg:text-[36px] font-bold leading-tight">
                             Abrir expediente de tránsito
                         </h1>
-                        <p className="mt-2 text-[14px] text-[color:var(--color-wx-ink-2)]">
+                        <p className="mt-2 text-[13px] sm:text-[14px] text-[color:var(--color-wx-ink-2)]">
                             Solo necesitamos una referencia mínima. Los datos aduaneros se completarán
                             automáticamente al analizar los documentos.
                         </p>
                     </div>
                 </div>
 
-                <div className="wx-card p-6 lg:p-8">
+                <div className="wx-card p-5 sm:p-6 lg:p-8">
                     <div className="flex items-center justify-between mb-6 pb-4 border-b border-[color:var(--color-wx-rule)]">
                         <div>
                             <div className="text-[11px] text-[color:var(--color-wx-muted)] uppercase tracking-wider">Referencia automática</div>

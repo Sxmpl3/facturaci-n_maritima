@@ -30,25 +30,31 @@ export default function TransitoIndex({ expedientes, resumen }: Props) {
     return (
         <TransitoShell
             section="transito"
-            actions={<Link href="/transito/nuevo" className="wx-btn"><PlusIcon /> Nuevo expediente</Link>}
+            actions={
+                <Link href="/transito/nuevo" className="wx-btn !px-3 sm:!px-4">
+                    <PlusIcon />
+                    <span className="hidden sm:inline">Nuevo expediente</span>
+                    <span className="sm:hidden">Nuevo</span>
+                </Link>
+            }
         >
             <Head title="Expedientes de tránsito · Wixia" />
 
             {/* Título con marca decorativa 2×2 */}
-            <div className="flex items-start gap-4 mb-8">
-                <div className="grid grid-cols-2 gap-0.5 mt-1.5 shrink-0">
-                    <span className="block w-4 h-4 bg-[color:var(--color-wx-block-gray)]" />
-                    <span className="block w-4 h-4 bg-[color:var(--color-wx-blue)]" />
-                    <span className="block w-4 h-4" />
-                    <span className="block w-4 h-4 bg-[color:var(--color-wx-block-dark)]" />
+            <div className="flex items-start gap-3 sm:gap-4 mb-6 sm:mb-8">
+                <div className="grid grid-cols-2 gap-0.5 mt-1 sm:mt-1.5 shrink-0">
+                    <span className="block w-3 h-3 sm:w-4 sm:h-4 bg-[color:var(--color-wx-block-gray)]" />
+                    <span className="block w-3 h-3 sm:w-4 sm:h-4 bg-[color:var(--color-wx-blue)]" />
+                    <span className="block w-3 h-3 sm:w-4 sm:h-4" />
+                    <span className="block w-3 h-3 sm:w-4 sm:h-4 bg-[color:var(--color-wx-block-dark)]" />
                 </div>
-                <div>
+                <div className="min-w-0">
                     <div className="wx-eyebrow mb-1">Módulo 01 · Tránsito</div>
-                    <h1 className="font-display text-[32px] lg:text-[38px] font-bold leading-tight">
-                        Bienvenida al Sistema Inteligente<br/>
+                    <h1 className="font-display text-[24px] sm:text-[32px] lg:text-[38px] font-bold leading-[1.15]">
+                        Bienvenida al Sistema Inteligente{' '}
                         <span className="text-[color:var(--color-wx-blue)]">de Gestión de Declaraciones Aduaneras</span>
                     </h1>
-                    <p className="mt-2 text-[14px] text-[color:var(--color-wx-ink-2)]">
+                    <p className="mt-2 text-[13px] sm:text-[14px] text-[color:var(--color-wx-ink-2)]">
                         Todos los expedientes de tránsito, con su estado en el ciclo IA-operador. La validación siempre es humana.
                     </p>
                 </div>

@@ -81,10 +81,21 @@ export default function ExpedienteView({ expediente, documentos, declaracion, hi
             breadcrumb={expediente.referencia}
             actions={
                 <div className="flex items-center gap-2">
-                    <Link href="/transito" className="wx-btn wx-btn-ghost">Volver</Link>
+                    <Link href="/transito" className="wx-btn wx-btn-ghost !px-3 sm:!px-4" title="Volver">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="sm:hidden"><path d="M15 6l-6 6 6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                        <span className="hidden sm:inline">Volver</span>
+                    </Link>
                     {puedeAnalizar && (
-                        <button onClick={lanzarAnalisis} disabled={analizando} className="wx-btn wx-btn">
-                            {analizando ? 'Analizando…' : (declaracion ? 'Reanalizar' : 'Analizar con IA')}
+                        <button onClick={lanzarAnalisis} disabled={analizando} className="wx-btn !px-3 sm:!px-4">
+                            {analizando
+                                ? 'Analizando…'
+                                : (
+                                    <>
+                                        <span className="sm:hidden">{declaracion ? '↻ IA' : 'IA'}</span>
+                                        <span className="hidden sm:inline">{declaracion ? 'Reanalizar' : 'Analizar con IA'}</span>
+                                    </>
+                                )
+                            }
                         </button>
                     )}
                 </div>
@@ -93,12 +104,14 @@ export default function ExpedienteView({ expediente, documentos, declaracion, hi
             <Head title={`${expediente.referencia} · Wixia`} />
 
             {/* Header del expediente */}
-            <section className="mb-8">
-                <div className="flex flex-wrap items-start justify-between gap-6">
-                    <div>
+            <section className="mb-6 sm:mb-8">
+                <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-5 lg:gap-6">
+                    <div className="min-w-0">
                         <div className="wx-eyebrow mb-2">Expediente de tránsito</div>
-                        <h1 className="font-display font-bold text-[46px] leading-none tabular-nums">{expediente.referencia}</h1>
-                        <div className="mt-3 flex items-center gap-3 flex-wrap">
+                        <h1 className="font-display font-bold text-[28px] sm:text-[36px] lg:text-[46px] leading-[1.05] tabular-nums break-all">
+                            {expediente.referencia}
+                        </h1>
+                        <div className="mt-3 flex items-center gap-2 flex-wrap">
                             <span className="wx-chip" data-tone={estadoTone[expediente.estado]}>
                                 <span className="dot" />{estadoLabel[expediente.estado]}
                             </span>
@@ -107,19 +120,19 @@ export default function ExpedienteView({ expediente, documentos, declaracion, hi
                                     declaracion.confianza_global >= 85 ? 'ok' :
                                     declaracion.confianza_global >= 60 ? 'warn' : 'error'
                                 }>
-                                    <span className="dot" />IA · {Math.round(declaracion.confianza_global)}% confianza
+                                    <span className="dot" />IA · {Math.round(declaracion.confianza_global)}%
                                 </span>
                             )}
-                            {expediente.mrn && <span className="wx-chip"><span className="dot" />MRN {expediente.mrn}</span>}
+                            {expediente.mrn && <span className="wx-chip max-w-full truncate"><span className="dot shrink-0" />MRN {expediente.mrn}</span>}
                         </div>
                     </div>
-                    <dl className="grid grid-cols-2 gap-x-8 gap-y-2 text-[12px] min-w-[260px]">
+                    <dl className="grid grid-cols-[max-content_1fr] sm:grid-cols-2 gap-x-4 sm:gap-x-8 gap-y-2 text-[12px] lg:min-w-[260px]">
                         <dt className="text-[color:var(--color-wx-muted)]">Cliente</dt>
-                        <dd>{expediente.cliente ?? '—'}</dd>
+                        <dd className="truncate">{expediente.cliente ?? '—'}</dd>
                         <dt className="text-[color:var(--color-wx-muted)]">Partida</dt>
-                        <dd className="tabular-nums">{expediente.aduana_partida ?? '—'}</dd>
+                        <dd className="tabular-nums truncate">{expediente.aduana_partida ?? '—'}</dd>
                         <dt className="text-[color:var(--color-wx-muted)]">Destino</dt>
-                        <dd className="tabular-nums">{expediente.aduana_destino ?? '—'}</dd>
+                        <dd className="tabular-nums truncate">{expediente.aduana_destino ?? '—'}</dd>
                         <dt className="text-[color:var(--color-wx-muted)]">Creado</dt>
                         <dd>{expediente.creado}</dd>
                         {expediente.validado_en && <>
@@ -143,7 +156,7 @@ export default function ExpedienteView({ expediente, documentos, declaracion, hi
 
                 {/* Panel derecho: tabs */}
                 <section>
-                    <nav className="flex items-center gap-6 border-b border-[color:var(--color-wx-inkline)] mb-6">
+                    <nav className="flex items-center gap-4 sm:gap-6 border-b border-[color:var(--color-wx-inkline)] mb-6 overflow-x-auto">
                         {[
                             { k: 'declaracion', l: 'Declaración', disabled: !declaracion },
                             { k: 'documentos',  l: 'Detalle documentos' },
@@ -154,7 +167,7 @@ export default function ExpedienteView({ expediente, documentos, declaracion, hi
                                 disabled={!!t.disabled}
                                 onClick={() => setTab(t.k as any)}
                                 className={[
-                                    'py-3 text-[13px] border-b-2 -mb-px transition-colors',
+                                    'py-3 text-[13px] border-b-2 -mb-px transition-colors whitespace-nowrap',
                                     tab === t.k
                                         ? 'border-[color:var(--color-wx-ink)] text-[color:var(--color-wx-ink)]'
                                         : 'border-transparent text-[color:var(--color-wx-muted)] hover:text-[color:var(--color-wx-ink)]',

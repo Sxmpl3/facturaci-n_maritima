@@ -10,7 +10,7 @@ export default function AuthSimpleLayout({
         <div className="min-h-svh flex flex-col bg-white text-[color:var(--color-wx-navy)]">
             <div className="flex-1 grid grid-cols-1 lg:grid-cols-[1.05fr_1fr]">
                 {/* Panel izquierdo azul cobalto — identidad Wixia */}
-                <aside className="wx-hero-blue relative overflow-hidden px-8 lg:px-14 py-10 flex flex-col justify-between text-white">
+                <aside className="wx-hero-blue relative overflow-hidden px-6 sm:px-8 lg:px-14 py-8 sm:py-10 hidden lg:flex flex-col justify-between text-white min-h-[420px]">
                     <HexNet />
                     <Link href="/" className="relative flex items-center gap-3">
                         <div className="w-10 h-10 rounded-md bg-white/15 backdrop-blur-sm relative">
