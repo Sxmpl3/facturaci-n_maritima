@@ -98,40 +98,46 @@ export default function TransitoIndex({ expedientes, resumen }: Props) {
                         <table className="w-full text-[13.5px]">
                             <thead>
                                 <tr className="text-left text-[11px] text-[color:var(--color-wx-muted)] uppercase tracking-wider bg-[color:var(--color-wx-paper-2)]/60">
-                                    <th className="px-5 py-3 font-medium">Referencia</th>
-                                    <th className="px-5 py-3 font-medium">Cliente / expedidor</th>
-                                    <th className="px-5 py-3 font-medium">Ruta aduanera</th>
-                                    <th className="px-5 py-3 font-medium">MRN</th>
-                                    <th className="px-5 py-3 font-medium">Docs</th>
-                                    <th className="px-5 py-3 font-medium" title="Confianza de la declaración consolidada (cobertura y coherencia entre documentos)">Confianza decl.</th>
-                                    <th className="px-5 py-3 font-medium">Estado</th>
-                                    <th className="px-5 py-3 font-medium">Creado</th>
+                                    <th className="px-4 sm:px-5 py-3 font-medium">Referencia</th>
+                                    <th className="px-4 sm:px-5 py-3 font-medium hidden md:table-cell">Cliente / expedidor</th>
+                                    <th className="px-4 sm:px-5 py-3 font-medium hidden lg:table-cell">Ruta aduanera</th>
+                                    <th className="px-4 sm:px-5 py-3 font-medium hidden xl:table-cell">MRN</th>
+                                    <th className="px-4 sm:px-5 py-3 font-medium hidden sm:table-cell">Docs</th>
+                                    <th className="px-4 sm:px-5 py-3 font-medium" title="Confianza de la declaración consolidada">Confianza</th>
+                                    <th className="px-4 sm:px-5 py-3 font-medium">Estado</th>
+                                    <th className="px-4 sm:px-5 py-3 font-medium hidden md:table-cell">Creado</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {expedientes.map(e => (
                                     <tr key={e.id} className="border-t border-[color:var(--color-wx-rule)] hover:bg-[color:var(--color-wx-paper-2)]/40 transition-colors">
-                                        <td className="px-5 py-3">
-                                            <Link href={`/transito/${e.id}`} className="font-medium text-[color:var(--color-wx-blue)] hover:underline tabular-nums">
+                                        <td className="px-4 sm:px-5 py-3">
+                                            <Link href={`/transito/${e.id}`} className="font-medium text-[color:var(--color-wx-blue)] hover:underline tabular-nums text-[12.5px] sm:text-[13.5px]">
                                                 {e.referencia}
                                             </Link>
+                                            {/* En móvil metemos aquí el cliente para no perderlo */}
+                                            <div className="md:hidden text-[11px] text-[color:var(--color-wx-muted)] mt-0.5 truncate max-w-[18ch]">
+                                                {e.cliente ?? 'sin cliente'}
+                                            </div>
                                         </td>
-                                        <td className="px-5 py-3">
+                                        <td className="px-4 sm:px-5 py-3 hidden md:table-cell">
                                             <div className="max-w-[24ch] truncate">{e.cliente ?? <em className="text-[color:var(--color-wx-muted)]">sin cliente</em>}</div>
                                         </td>
-                                        <td className="px-5 py-3 text-[color:var(--color-wx-ink-2)]">
+                                        <td className="px-4 sm:px-5 py-3 text-[color:var(--color-wx-ink-2)] hidden lg:table-cell">
                                             {e.aduana_partida && e.aduana_destino ? (
                                                 <span className="text-[12.5px] tabular-nums">{e.aduana_partida} → {e.aduana_destino}</span>
                                             ) : <span className="text-[color:var(--color-wx-muted)]">—</span>}
                                         </td>
-                                        <td className="px-5 py-3 tabular-nums text-[12.5px]">
+                                        <td className="px-4 sm:px-5 py-3 tabular-nums text-[12.5px] hidden xl:table-cell">
                                             {e.mrn ?? <span className="text-[color:var(--color-wx-muted)]">pendiente</span>}
                                         </td>
-                                        <td className="px-5 py-3 tabular-nums text-[color:var(--color-wx-ink-2)]">{e.documentos_count}</td>
-                                        <td className="px-5 py-3 min-w-[160px]">
+                                        <td className="px-4 sm:px-5 py-3 tabular-nums text-[color:var(--color-wx-ink-2)] hidden sm:table-cell">{e.documentos_count}</td>
+                                        <td className="px-4 sm:px-5 py-3 w-[140px]">
                                             {e.confianza != null ? (
-                                                <div className="flex items-center gap-2 flex-wrap"
-                                                     title={`Confianza de la declaración: ${Math.round(e.confianza)}%${e.advertencias ? ` · ${e.advertencias} advertencia${e.advertencias>1?'s':''}` : ''}`}>
+                                                <div
+                                                    className="flex items-center gap-2 whitespace-nowrap"
+                                                    title={`Confianza de la declaración: ${Math.round(e.confianza)}%${e.advertencias ? ` · ${e.advertencias} advertencia${e.advertencias>1?'s':''}` : ''}`}
+                                                >
                                                     <div className="w-14 h-1.5 bg-[color:var(--color-wx-paper-2)] rounded-full overflow-hidden shrink-0">
                                                         <div
                                                             className="h-full rounded-full transition-all"
@@ -143,21 +149,18 @@ export default function TransitoIndex({ expedientes, resumen }: Props) {
                                                             }}
                                                         />
                                                     </div>
-                                                    <span className="tabular-nums text-[12px] text-[color:var(--color-wx-ink-2)] shrink-0">{Math.round(e.confianza)}%</span>
-                                                    {e.advertencias > 0 && (
-                                                        <span className="wx-chip whitespace-nowrap" data-tone="warn" title={`${e.advertencias} advertencia${e.advertencias>1?'s':''} pendiente${e.advertencias>1?'s':''} de revisar`}>
-                                                            <span className="dot" />{e.advertencias}
-                                                        </span>
-                                                    )}
+                                                    <span className="tabular-nums text-[12px] text-[color:var(--color-wx-ink-2)] shrink-0">
+                                                        {Math.round(e.confianza)}%
+                                                    </span>
                                                 </div>
                                             ) : <span className="text-[color:var(--color-wx-muted)]">—</span>}
                                         </td>
-                                        <td className="px-5 py-3">
+                                        <td className="px-4 sm:px-5 py-3">
                                             <span className="wx-chip whitespace-nowrap" data-tone={estadoTone[e.estado]}>
                                                 <span className="dot" />{estadoLabel[e.estado]}
                                             </span>
                                         </td>
-                                        <td className="px-5 py-3 text-[color:var(--color-wx-muted)] text-[12px]">{e.creado}</td>
+                                        <td className="px-4 sm:px-5 py-3 text-[color:var(--color-wx-muted)] text-[12px] hidden md:table-cell whitespace-nowrap">{e.creado}</td>
                                     </tr>
                                 ))}
                             </tbody>
