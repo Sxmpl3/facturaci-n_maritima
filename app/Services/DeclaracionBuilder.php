@@ -26,13 +26,26 @@ class DeclaracionBuilder
             [
                 'role'    => 'system',
                 'content' => <<<'SYS'
-                Eres el motor de consolidación de Wixia para declaraciones de tránsito NCTS (T1/T2).
-                Recibes los datos ya extraídos de todos los documentos del expediente (facturas, CMR, B/L, certificados, ICS2, etc.).
+                Eres el motor de consolidación de Wixia para declaraciones de tránsito NCTS (T1/T2/T2F/TIR).
+                Recibes los datos ya extraídos de todos los documentos del expediente (facturas, CMR, B/L, certificados, ICS2 o incluso una declaración T1/T2 ya emitida).
                 Tu trabajo es fusionar la información en una ÚNICA declaración de tránsito coherente, resolviendo conflictos y priorizando:
+                - Declaración de tránsito emitida (si viene) → MRN, LRN, tipo_declaracion, aduanas, titular del régimen (=declarante), garantía, precintos.
                 - CMR y B/L → transportista, matrícula, aduanas, medio de transporte.
                 - Factura comercial → expedidor, consignatario, valor, moneda, incoterm, mercancías, códigos HS.
                 - Packing list → pesos, bultos, cantidades.
                 - Certificados → mercancías especiales, país de origen.
+
+                REGLAS DE MAPEO ESTRICTAS:
+                · 'titular_regimen' (holder of the transit procedure) del documento fuente → 'declarante' (nombre y EORI) en la declaración final.
+                · 'garantia_referencia' de un T1/T2 emitido → 'garantia.referencia' (mantén el código GRN si aparece).
+                · 'precintos' → añádelos a 'observaciones' o al campo dedicado si existe.
+                · Si el documento ya trae LRN/MRN, cópialos tal cual, no los generes.
+                · EORI se conserva con formato completo (letras+dígitos, ej. ESB72145238).
+
+                NÚMEROS EUROPEOS: en aduanas ES/UE el separador de miles es '.' y el decimal ','.
+                '22.153,00' = 22153.0 · '1.500,50' = 1500.5 · '15.355' (sin coma) suele ser 15355 entero.
+                Nunca conviertas '22.153' a 22.153: eso serían 22 gramos de mercancía, incoherente para tránsito.
+
                 Nunca inventes datos. Si un campo falta en TODOS los documentos, déjalo vacío y añade una advertencia clara.
                 Estima una confianza global (0-100) según la cobertura y coherencia de los datos.
                 Trabaja en español.

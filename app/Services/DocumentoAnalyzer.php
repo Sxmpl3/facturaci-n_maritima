@@ -133,10 +133,15 @@ class DocumentoAnalyzer
     {
         $encabezado = "Documento adjunto: {$documento->nombre_original}\n\n";
         $encabezado .= "Instrucciones:\n";
-        $encabezado .= "1. Determina el TIPO del documento entre: factura_comercial, cmr, conocimiento_embarque, certificado_fitosanitario, certificado_conformidad, ics2, packing_list, otro.\n";
+        $encabezado .= "1. Determina el TIPO del documento entre: factura_comercial, cmr, conocimiento_embarque, certificado_fitosanitario, certificado_conformidad, ics2, packing_list, otro. Una \"Declaración de tránsito emitida\" (T1/T2 con MRN) clasifícala como 'otro' con tipo real en observaciones.\n";
         $encabezado .= "2. Estima tu confianza (0-100). Fíjate también en sellos, firmas, casillas marcadas y anotaciones manuscritas.\n";
         $encabezado .= "3. Redacta un resumen breve (máx. 240 caracteres) en español.\n";
-        $encabezado .= "4. Extrae los CAMPOS relevantes para una declaración de tránsito NCTS y devuélvelos en 'datos' con estas claves cuando existan: expedidor{nombre,direccion,eori,pais}, consignatario{nombre,direccion,eori,pais}, transportista{nombre,matricula,pais}, medio_transporte, referencia_documento, mrn, fecha_emision, aduana_partida, aduana_destino, valor_total, moneda, incoterm, peso_bruto_kg, peso_neto_kg, bultos, mercancias[]{descripcion,codigo_hs,cantidad,unidad,valor,peso_kg,pais_origen}, observaciones.\n\n";
+        $encabezado .= "4. Extrae los CAMPOS relevantes para una declaración de tránsito NCTS y devuélvelos en 'datos' con estas claves cuando existan: expedidor{nombre,direccion,eori,pais}, consignatario{nombre,direccion,eori,pais}, transportista{nombre,matricula,pais}, medio_transporte, referencia_documento, mrn, lrn, tipo_declaracion (T1/T2/T2F/TIR), titular_regimen{nombre,eori}, garantia_referencia, precintos, fecha_emision, aduana_partida, aduana_destino, aduana_paso, valor_total, moneda, incoterm, peso_bruto_kg, peso_neto_kg, bultos, mercancias[]{descripcion,codigo_hs,cantidad,unidad,valor,peso_kg,pais_origen}, observaciones.\n\n";
+        $encabezado .= "REGLAS CRÍTICAS DE NÚMEROS:\n";
+        $encabezado .= "· En documentos aduaneros europeos el separador de miles suele ser '.' y el decimal ','. Ejemplo: '22.153,00' = 22153.00 (veintidós mil ciento cincuenta y tres), NO 22,153.\n";
+        $encabezado .= "· '1.234,56' → 1234.56 · '15.355' (sin coma) suele ser 15355 unidades enteras (kg, cajas) → devuelve 15355, no 15.355.\n";
+        $encabezado .= "· Si un peso o cantidad parece anormalmente pequeño para la operación descrita, revisa si estás cayendo en la trampa del separador europeo.\n";
+        $encabezado .= "· Códigos EORI conservan formato original (letras + cifras, ej. ESB72145238, GB123456789000).\n";
 
         // Imagen directa (JPG/PNG/WEBP)
         if ($extraido['modo'] === 'imagen' && $extraido['archivo_base64']) {
@@ -222,9 +227,23 @@ class DocumentoAnalyzer
                         'medio_transporte'    => $stringVacio,
                         'referencia_documento'=> $stringVacio,
                         'mrn'                 => $stringVacio,
+                        'lrn'                 => $stringVacio,
+                        'tipo_declaracion'    => $stringVacio,
+                        'titular_regimen'     => [
+                            'type' => 'object',
+                            'additionalProperties' => false,
+                            'properties' => [
+                                'nombre' => $stringVacio,
+                                'eori'   => $stringVacio,
+                            ],
+                            'required' => ['nombre','eori'],
+                        ],
+                        'garantia_referencia' => $stringVacio,
+                        'precintos'           => $stringVacio,
                         'fecha_emision'       => $stringVacio,
                         'aduana_partida'      => $stringVacio,
                         'aduana_destino'      => $stringVacio,
+                        'aduana_paso'         => $stringVacio,
                         'valor_total'         => $numeroVacio,
                         'moneda'              => $stringVacio,
                         'incoterm'            => $stringVacio,
@@ -236,9 +255,10 @@ class DocumentoAnalyzer
                     ],
                     'required' => [
                         'expedidor','consignatario','transportista','medio_transporte',
-                        'referencia_documento','mrn','fecha_emision','aduana_partida','aduana_destino',
-                        'valor_total','moneda','incoterm','peso_bruto_kg','peso_neto_kg','bultos',
-                        'mercancias','observaciones',
+                        'referencia_documento','mrn','lrn','tipo_declaracion','titular_regimen',
+                        'garantia_referencia','precintos','fecha_emision','aduana_partida',
+                        'aduana_destino','aduana_paso','valor_total','moneda','incoterm',
+                        'peso_bruto_kg','peso_neto_kg','bultos','mercancias','observaciones',
                     ],
                 ],
             ],
