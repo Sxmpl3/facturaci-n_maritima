@@ -668,25 +668,63 @@ function HistorialLista({ historial }: { historial: Historial[] }) {
 function VisorDocumento({ documento, onClose }: { documento: Documento; onClose: () => void; }) {
     const esImagen = documento.mime?.startsWith('image/');
     const esPdf = documento.mime === 'application/pdf' || documento.nombre_original.toLowerCase().endsWith('.pdf');
+
+    // Cerrar con ESC
+    useEffect(() => {
+        const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    }, [onClose]);
+
     return (
-        <div className="fixed inset-0 z-50 bg-[color:var(--color-wx-ink)]/80 flex items-stretch justify-center p-6 overflow-auto">
-            <div className="bg-[color:var(--color-wx-paper)] w-full max-w-5xl flex flex-col shadow-xl">
-                <header className="flex items-center justify-between px-5 py-3 border-b border-[color:var(--color-wx-inkline)]">
-                    <div>
-                        <div className="text-[13px] font-medium">{documento.nombre_original}</div>
+        <div
+            className="fixed inset-0 z-50 bg-[color:var(--color-wx-ink)]/80 flex items-stretch justify-center p-2 sm:p-4 md:p-6 overflow-auto"
+            onClick={onClose}
+        >
+            <div
+                className="bg-white w-full max-w-5xl flex flex-col shadow-xl rounded-md overflow-hidden"
+                onClick={(e) => e.stopPropagation()}
+            >
+                <header className="flex items-center justify-between gap-3 px-4 sm:px-5 py-3 border-b border-[color:var(--color-wx-rule)]">
+                    <div className="min-w-0">
+                        <div className="text-[13px] font-medium truncate">{documento.nombre_original}</div>
                         <div className="text-[11px] text-[color:var(--color-wx-muted)]">{documento.tipo_label}</div>
                     </div>
-                    <button onClick={onClose} className="wx-btn wx-btn-ghost">Cerrar</button>
+                    <div className="flex items-center gap-2 shrink-0">
+                        {documento.url && (
+                            <a
+                                href={documento.url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="wx-btn wx-btn-outline !py-1.5 !px-3 text-[12px]"
+                            >
+                                Abrir en pestaña ↗
+                            </a>
+                        )}
+                        <button onClick={onClose} className="wx-btn wx-btn-ghost !py-1.5 !px-3 text-[12px]">
+                            Cerrar
+                        </button>
+                    </div>
                 </header>
+
                 <div className="flex-1 min-h-[60vh] bg-[color:var(--color-wx-paper-2)] flex items-center justify-center">
-                    {esImagen && documento.url && <img src={documento.url} alt="" className="max-h-[80vh] max-w-full" />}
+                    {esImagen && documento.url && (
+                        <img src={documento.url} alt={documento.nombre_original} className="max-h-[85vh] max-w-full" />
+                    )}
                     {esPdf && documento.url && (
-                        <object data={documento.url} type="application/pdf" className="w-full h-[80vh]">
-                            <a href={documento.url} target="_blank" rel="noreferrer" className="wx-btn wx-btn">Abrir PDF</a>
-                        </object>
+                        // iframe funciona mejor que <object> en Safari macOS/iOS.
+                        // En iOS Safari el visor nativo se abre igualmente si el iframe
+                        // no renderiza — por eso mantenemos el CTA "Abrir en pestaña".
+                        <iframe
+                            src={documento.url}
+                            title={documento.nombre_original}
+                            className="w-full h-[85vh] bg-white border-0"
+                        />
                     )}
                     {!esImagen && !esPdf && documento.url && (
-                        <a href={documento.url} target="_blank" rel="noreferrer" className="wx-btn wx-btn">Descargar</a>
+                        <a href={documento.url} target="_blank" rel="noreferrer" className="wx-btn">
+                            Descargar {documento.nombre_original}
+                        </a>
                     )}
                 </div>
             </div>

@@ -123,13 +123,22 @@ class DocumentoController extends Controller
         abort_if($documento->expediente_id !== $expediente->id, 404);
         abort_unless(Storage::disk('public')->exists($documento->ruta), 404);
 
+        // Codificación RFC 5987 para permitir tildes y ñ en el nombre del archivo.
+        $asciiName = preg_replace('/[^\w\-. ]+/u', '_', $documento->nombre_original) ?? 'documento';
+        $utf8Name  = rawurlencode($documento->nombre_original);
+
         return Storage::disk('public')->response(
             $documento->ruta,
             $documento->nombre_original,
             [
                 'Content-Type'        => $documento->mime ?: 'application/octet-stream',
-                'Content-Disposition' => 'inline; filename="'.addslashes($documento->nombre_original).'"',
-                'X-Content-Type-Options' => 'nosniff',
+                'Content-Disposition' => 'inline; filename="'.$asciiName.'"; filename*=UTF-8\'\''.$utf8Name,
+                // Permitir embed dentro del propio dominio (iframe del visor) sin
+                // levantar X-Frame-Options y sin nosniff, que Safari a veces
+                // interpreta como bloqueo para PDFs.
+                'Content-Security-Policy' => "frame-ancestors 'self'",
+                'X-Frame-Options'         => 'SAMEORIGIN',
+                'Accept-Ranges'           => 'bytes',
             ],
         );
     }
