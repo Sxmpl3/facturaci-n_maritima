@@ -127,6 +127,17 @@ export default function TransitoShell({
 /* -------------------------------------------------------------------- */
 
 function Sidebar({ section, auth }: { section: Props['section']; auth: PageShared['auth'] }) {
+    // Detección automática de la sección activa a partir de la URL,
+    // así el highlight funciona para /transito, /transito/nuevo, /transito/{id}
+    // y /settings/* sin tener que pasar 'section' desde cada página.
+    const url = usePage().url;
+    const path = (url.split('?')[0] || '/').replace(/\/+$/, '') || '/';
+
+    const enNuevo    = path === '/transito/nuevo';
+    const enAjustes  = path.startsWith('/settings') || section === 'ajustes';
+    const enPanel    = path === '/transito' || (/^\/transito\/\d+/.test(path)); // panel + detalle expediente
+    const enTransito = path.startsWith('/transito') || section === 'transito';
+
     return (
         <>
             <div className="px-6 pt-7 pb-6">
@@ -145,14 +156,14 @@ function Sidebar({ section, auth }: { section: Props['section']; auth: PageShare
 
             <div className="px-4 pt-2 pb-3 text-[10px] uppercase tracking-widest text-white/40">Operativa</div>
             <nav className="px-3 space-y-0.5 text-[13.5px]">
-                <NavItem icon={IconGrid}   href="/transito"         title="Panel"          active={section === 'inicio' || section === 'transito'} />
-                <NavItem icon={IconFolder} href="/transito/nuevo"   title="Nuevo expediente" />
-                <NavItem icon={IconCog}    href="/settings/profile" title="Ajustes" />
+                <NavItem icon={IconGrid}   href="/transito"         title="Panel"            active={enPanel && !enNuevo} />
+                <NavItem icon={IconFolder} href="/transito/nuevo"   title="Nuevo expediente" active={enNuevo} />
+                <NavItem icon={IconCog}    href="/settings/profile" title="Ajustes"          active={enAjustes} />
             </nav>
 
             <div className="px-4 pt-6 pb-3 text-[10px] uppercase tracking-widest text-white/40">Módulos</div>
             <nav className="px-3 space-y-0.5 text-[13.5px]">
-                <ModItem n="01" href="/transito" title="Tránsito"    active={section === 'transito'} />
+                <ModItem n="01" href="/transito" title="Tránsito"    active={enTransito} />
                 <ModItem n="02" href="#" disabled title="Exportación" />
                 <ModItem n="03" href="#" disabled title="Importación" />
             </nav>
