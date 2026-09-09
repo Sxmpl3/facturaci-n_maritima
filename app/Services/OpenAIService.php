@@ -49,7 +49,8 @@ class OpenAIService
         }
 
         $response = Http::withToken($this->apiKey)
-            ->timeout(120)
+            ->timeout(240)
+            ->connectTimeout(10)
             ->acceptJson()
             ->asJson()
             ->post($this->endpoint, $payload);
