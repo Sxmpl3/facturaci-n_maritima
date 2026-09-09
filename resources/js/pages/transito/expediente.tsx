@@ -292,17 +292,26 @@ function DocumentosPanel({
                         Aún no hay documentos adjuntos.
                     </li>
                 )}
-                {documentos.map((d) => (
+                {documentos.map((d) => {
+                    const esPdf = d.mime === 'application/pdf' || d.nombre_original.toLowerCase().endsWith('.pdf');
+                    // PDFs → pestaña nueva (visor nativo del OS, infalible en Safari).
+                    // Imágenes/otros → modal con <img>.
+                    const abrirDoc = () => {
+                        if (esPdf && d.url) window.open(d.url, '_blank', 'noopener,noreferrer');
+                        else onPreview(d);
+                    };
+                    return (
                     <li key={d.id} className="p-4 flex items-start gap-3">
                         <div className="w-8 h-10 border border-[color:var(--color-wx-inkline)] bg-[color:var(--color-wx-paper)] flex items-center justify-center text-[9px] tracking-widest text-[color:var(--color-wx-muted)]">
                             {formatoAbreviado(d.mime, d.nombre_original)}
                         </div>
                         <div className="flex-1 min-w-0">
                             <button
-                                onClick={() => onPreview(d)}
+                                onClick={abrirDoc}
                                 className="text-[13px] text-left leading-tight hover:text-[color:var(--color-wx-signal)] truncate block w-full"
+                                title={esPdf ? 'Abrir PDF en pestaña nueva' : 'Ver documento'}
                             >
-                                {d.nombre_original}
+                                {d.nombre_original}{esPdf && ' ↗'}
                             </button>
                             <div className="mt-1 flex flex-wrap items-center gap-2">
                                 {d.tipo_detectado ? (
@@ -336,7 +345,8 @@ function DocumentosPanel({
                             </button>
                         )}
                     </li>
-                ))}
+                    );
+                })}
             </ul>
         </div>
     );
@@ -578,16 +588,26 @@ function DocumentosDetalle({ documentos, onPreview }: { documentos: Documento[];
     }
     return (
         <div className="space-y-4">
-            {documentos.map((d) => (
+            {documentos.map((d) => {
+                const esPdf = d.mime === 'application/pdf' || d.nombre_original.toLowerCase().endsWith('.pdf');
+                return (
                 <article key={d.id} className="wx-card p-5">
                     <header className="flex items-center justify-between gap-4 mb-3">
-                        <div>
-                            <div className="text-[13px] font-medium">{d.nombre_original}</div>
+                        <div className="min-w-0">
+                            <div className="text-[13px] font-medium truncate">{d.nombre_original}</div>
                             <div className="text-[11px] text-[color:var(--color-wx-muted)] mt-1">
-                                {d.tipo_label} · confianza {d.confianza != null ? Math.round(d.confianza) + '%' : '—'} · {formatoBytes(d.tamano)}
+                                {d.tipo_label} · lectura {d.confianza != null ? Math.round(d.confianza) + '%' : '—'} · {formatoBytes(d.tamano)}
                             </div>
                         </div>
-                        <button onClick={() => onPreview(d)} className="wx-btn wx-btn-ghost text-[12px]">Ver documento</button>
+                        {esPdf && d.url ? (
+                            <a href={d.url} target="_blank" rel="noopener noreferrer" className="wx-btn wx-btn-ghost text-[12px] shrink-0">
+                                Ver PDF ↗
+                            </a>
+                        ) : (
+                            <button onClick={() => onPreview(d)} className="wx-btn wx-btn-ghost text-[12px] shrink-0">
+                                Ver documento
+                            </button>
+                        )}
                     </header>
                     {d.nota_ia && (
                         <p className="text-[12px] text-[color:var(--color-wx-ink-2)] mb-3 border-l-2 border-[color:var(--color-wx-signal)] pl-3">
@@ -598,7 +618,8 @@ function DocumentosDetalle({ documentos, onPreview }: { documentos: Documento[];
                         <DatosGrid datos={d.datos_extraidos} />
                     )}
                 </article>
-            ))}
+                );
+            })}
         </div>
     );
 }
