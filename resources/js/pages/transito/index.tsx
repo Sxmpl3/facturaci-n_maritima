@@ -103,7 +103,7 @@ export default function TransitoIndex({ expedientes, resumen }: Props) {
                                     <th className="px-5 py-3 font-medium">Ruta aduanera</th>
                                     <th className="px-5 py-3 font-medium">MRN</th>
                                     <th className="px-5 py-3 font-medium">Docs</th>
-                                    <th className="px-5 py-3 font-medium">IA</th>
+                                    <th className="px-5 py-3 font-medium" title="Confianza de la declaración consolidada (cobertura y coherencia entre documentos)">Confianza decl.</th>
                                     <th className="px-5 py-3 font-medium">Estado</th>
                                     <th className="px-5 py-3 font-medium">Creado</th>
                                 </tr>
@@ -128,12 +128,13 @@ export default function TransitoIndex({ expedientes, resumen }: Props) {
                                             {e.mrn ?? <span className="text-[color:var(--color-wx-muted)]">pendiente</span>}
                                         </td>
                                         <td className="px-5 py-3 tabular-nums text-[color:var(--color-wx-ink-2)]">{e.documentos_count}</td>
-                                        <td className="px-5 py-3">
+                                        <td className="px-5 py-3 min-w-[160px]">
                                             {e.confianza != null ? (
-                                                <div className="flex items-center gap-2">
-                                                    <div className="w-16 h-1.5 bg-[color:var(--color-wx-paper-2)] rounded-full overflow-hidden">
+                                                <div className="flex items-center gap-2 flex-wrap"
+                                                     title={`Confianza de la declaración: ${Math.round(e.confianza)}%${e.advertencias ? ` · ${e.advertencias} advertencia${e.advertencias>1?'s':''}` : ''}`}>
+                                                    <div className="w-14 h-1.5 bg-[color:var(--color-wx-paper-2)] rounded-full overflow-hidden shrink-0">
                                                         <div
-                                                            className="h-full rounded-full"
+                                                            className="h-full rounded-full transition-all"
                                                             style={{
                                                                 width: `${Math.max(6, Math.min(100, e.confianza))}%`,
                                                                 background:
@@ -142,15 +143,17 @@ export default function TransitoIndex({ expedientes, resumen }: Props) {
                                                             }}
                                                         />
                                                     </div>
-                                                    <span className="tabular-nums text-[12px] text-[color:var(--color-wx-ink-2)]">{Math.round(e.confianza)}%</span>
+                                                    <span className="tabular-nums text-[12px] text-[color:var(--color-wx-ink-2)] shrink-0">{Math.round(e.confianza)}%</span>
+                                                    {e.advertencias > 0 && (
+                                                        <span className="wx-chip whitespace-nowrap" data-tone="warn" title={`${e.advertencias} advertencia${e.advertencias>1?'s':''} pendiente${e.advertencias>1?'s':''} de revisar`}>
+                                                            <span className="dot" />{e.advertencias}
+                                                        </span>
+                                                    )}
                                                 </div>
                                             ) : <span className="text-[color:var(--color-wx-muted)]">—</span>}
-                                            {e.advertencias > 0 && (
-                                                <span className="ml-2 wx-chip" data-tone="warn"><span className="dot" />{e.advertencias}</span>
-                                            )}
                                         </td>
                                         <td className="px-5 py-3">
-                                            <span className="wx-chip" data-tone={estadoTone[e.estado]}>
+                                            <span className="wx-chip whitespace-nowrap" data-tone={estadoTone[e.estado]}>
                                                 <span className="dot" />{estadoLabel[e.estado]}
                                             </span>
                                         </td>

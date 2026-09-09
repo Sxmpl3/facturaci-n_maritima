@@ -116,11 +116,15 @@ export default function ExpedienteView({ expediente, documentos, declaracion, hi
                                 <span className="dot" />{estadoLabel[expediente.estado]}
                             </span>
                             {declaracion?.confianza_global != null && (
-                                <span className="wx-chip" data-tone={
-                                    declaracion.confianza_global >= 85 ? 'ok' :
-                                    declaracion.confianza_global >= 60 ? 'warn' : 'error'
-                                }>
-                                    <span className="dot" />IA · {Math.round(declaracion.confianza_global)}%
+                                <span
+                                    className="wx-chip whitespace-nowrap"
+                                    data-tone={
+                                        declaracion.confianza_global >= 85 ? 'ok' :
+                                        declaracion.confianza_global >= 60 ? 'warn' : 'error'
+                                    }
+                                    title="Confianza global de la declaración consolidada"
+                                >
+                                    <span className="dot" />Declaración · {Math.round(declaracion.confianza_global)}%
                                 </span>
                             )}
                             {expediente.mrn && <span className="wx-chip max-w-full truncate"><span className="dot shrink-0" />MRN {expediente.mrn}</span>}
@@ -307,7 +311,12 @@ function DocumentosPanel({
                                     <span className="wx-chip" data-tone="muted"><span className="dot" />sin analizar</span>
                                 )}
                                 {d.confianza != null && (
-                                    <span className="text-[11px] tabular-nums text-[color:var(--color-wx-muted)]">{Math.round(d.confianza)}%</span>
+                                    <span
+                                        className="text-[11px] tabular-nums text-[color:var(--color-wx-muted)]"
+                                        title="Confianza de lectura de este documento (calidad OCR/interpretación)"
+                                    >
+                                        lectura {Math.round(d.confianza)}%
+                                    </span>
                                 )}
                                 <span className="text-[11px] text-[color:var(--color-wx-muted)] tabular-nums">{formatoBytes(d.tamano)}</span>
                             </div>
